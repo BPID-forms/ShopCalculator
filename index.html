@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen p-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Logos -->
+        <div class="flex justify-between items-start mb-6">
+            <!-- Left Logo -->
+            <div class="w-50 h-16 flex items-center justify-center">
+                <img src="logo1.png" alt="Logo 1" class="max-w-full max-h-full object-contain">
+            </div>
+            
+            <!-- Right Logo -->
+            <div class="w-50 h-16 flex items-center justify-center">
+                <img src="logo2.png" alt="Logo 2" class="max-w-full max-h-full object-contain">
+            </div>
+        </div>
+
+
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Receipt Calculator</h1>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-6">
+            <!-- Input Section -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Input Details</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">RE/ Invoice Amount</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">₱</span>
+                                <input type="number" id="invoiceAmount" class="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="0.00" step="0.01">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tax Type</label>
+                            <select id="taxType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="vat-inclusive">VAT Inclusive</option>
+                                <option value="vat-exempt">VAT-Exempt/Zero Rated</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Withholding Tax Rate</label>
+                            <select id="withholdingRate" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="0">No Withholding Tax</option>
+                                <option value="1">1%</option>
+                                <option value="2">2%</option>
+                                <option value="5">5%</option>
+                                <option value="10">10%</option>
+                                <option value="15">15%</option>
+                            </select>
+                        </div>
+
+                        <button onclick="clearAll()" class="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
+                            Clear All Entries
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <!-- Results Section -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-6">Calculation Results</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                                <span class="font-medium text-gray-700">Total Sales</span>
+                                <span id="totalSales" class="font-semibold text-gray-900 cursor-pointer hover:bg-gray-100 px-2 py-1 rounded transition-colors" onclick="copyValue('totalSales')" title="Click to copy">₱0.00</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                                <span class="font-medium text-gray-700">12% VAT</span>
+                                <span id="vatAmount" class="font-semibold text-gray-900 cursor-pointer hover:bg-gray-100 px-2 py-1 rounded transition-colors" onclick="copyValue('vatAmount')" title="Click to copy">₱0.00</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                                <span class="font-medium text-gray-700">Total Invoice Amount</span>
+                                <span id="totalInvoice" class="font-semibold text-gray-900 cursor-pointer hover:bg-gray-100 px-2 py-1 rounded transition-colors" onclick="copyValue('totalInvoice')" title="Click to copy">₱0.00</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                                <span class="font-medium text-gray-700">Less: Withholding Tax</span>
+                                <span id="withholdingAmount" class="font-semibold text-red-600 cursor-pointer hover:bg-red-50 px-2 py-1 rounded transition-colors" onclick="copyValue('withholdingAmount')" title="Click to copy">₱0.00</span>
+                            </div>
+                            
+                            <div class="flex justify-between items-center py-3 bg-blue-50 px-4 rounded-lg border-2 border-blue-200">
+                                <span class="font-bold text-blue-800">Total Amount Payable</span>
+                                <span id="totalPayable" class="font-bold text-xl text-blue-800 cursor-pointer hover:bg-blue-100 px-2 py-1 rounded transition-colors" onclick="copyValue('totalPayable')" title="Click to copy">₱0.00</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex justify-between items-center mb-3">
+                                    <h3 class="font-semibold text-gray-800">Amount in Words</h3>
+                                    <div class="relative">
+                                        <button onclick="copyAmountInWords()" class="text-blue-500 hover:text-blue-700 p-2 rounded transition-colors text-lg" title="Copy to clipboard">
+                                            📋
+                                        </button>
+                                        <div id="copyTooltip" class="absolute -top-8 right-0 bg-green-600 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity duration-300 whitespace-nowrap">
+                                            Copied!
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="amountInWords" class="text-gray-700 font-medium min-h-[60px] p-3 bg-white rounded border">
+                                    Zero Philippine Pesos
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructions Section -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-6">
+                    <h3 class="font-semibold text-amber-800 mb-3">Instructions:</h3>
+                    <ol class="text-sm text-amber-700 space-y-1">
+                        <li>1. Enter the RE/ Invoice Amount</li>
+                        <li>2. Select the Tax Type</li>
+                        <li>3. Select the Withholding tax rate if applicable</li>
+                        <li>4. Copy the data in your receipt</li>
+                    </ol>
+                    <div class="mt-4 p-3 bg-amber-100 rounded-lg">
+                        <p class="text-sm font-medium text-amber-800">Reminder!</p>
+                        <p class="text-sm text-amber-700">Please delete your entries after using this calculator. Thank you.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Number to words conversion
+        function numberToWords(num) {
+            if (num === 0) return 'Zero Philippine Pesos Only';
+            
+            const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+            const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            const thousands = ['', 'Thousand', 'Million', 'Billion'];
+
+            function convertHundreds(n) {
+                let result = '';
+                if (n >= 100) {
+                    result += ones[Math.floor(n / 100)] + ' Hundred ';
+                    n %= 100;
+                }
+                if (n >= 20) {
+                    result += tens[Math.floor(n / 10)];
+                    n %= 10;
+                    if (n > 0) {
+                        result += ' ' + ones[n];
+                    }
+                } else if (n >= 10) {
+                    result += teens[n - 10];
+                } else if (n > 0) {
+                    result += ones[n];
+                }
+                return result.trim();
+            }
+
+            function convertCents(cents) {
+                if (cents === 0) return '';
+                if (cents < 10) return 'Zero ' + ones[cents];
+                if (cents < 20) return teens[cents - 10];
+                
+                let result = tens[Math.floor(cents / 10)];
+                if (cents % 10 > 0) {
+                    result += ' ' + ones[cents % 10];
+                }
+                return result;
+            }
+
+            let wholePart = Math.floor(num);
+            let decimalPart = Math.round((num - wholePart) * 100);
+            
+            let result = '';
+            let thousandIndex = 0;
+            
+            while (wholePart > 0) {
+                let chunk = wholePart % 1000;
+                if (chunk !== 0) {
+                    let chunkWords = convertHundreds(chunk);
+                    if (thousandIndex > 0) {
+                        chunkWords += ' ' + thousands[thousandIndex];
+                    }
+                    result = chunkWords + (result ? ' ' + result : '');
+                }
+                wholePart = Math.floor(wholePart / 1000);
+                thousandIndex++;
+            }
+            
+            result = result + ' Pesos';
+            
+            if (decimalPart > 0) {
+                result += ' and ' + convertCents(decimalPart) + ' Centavos';
+            }
+            
+            result += ' Only';
+            
+            return result;
+        }
+
+        function formatCurrency(amount) {
+            return '₱' + amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function calculate() {
+            const invoiceAmount = parseFloat(document.getElementById('invoiceAmount').value) || 0;
+            const taxType = document.getElementById('taxType').value;
+            const withholdingRate = parseFloat(document.getElementById('withholdingRate').value) || 0;
+
+            let totalSales, vatAmount, totalInvoice;
+
+            if (taxType === 'vat-inclusive') {
+                // VAT Inclusive: Invoice amount includes VAT
+                totalInvoice = invoiceAmount;
+                totalSales = invoiceAmount / 1.12;
+                vatAmount = totalSales * 0.12;
+            } else {
+                // VAT Exempt/Zero Rated: No VAT
+                totalSales = invoiceAmount;
+                vatAmount = 0;
+                totalInvoice = invoiceAmount;
+            }
+
+            const withholdingAmount = totalSales * (withholdingRate / 100);
+            const totalPayable = totalInvoice - withholdingAmount;
+
+            // Update display
+            document.getElementById('totalSales').textContent = formatCurrency(totalSales);
+            document.getElementById('vatAmount').textContent = formatCurrency(vatAmount);
+            document.getElementById('totalInvoice').textContent = formatCurrency(totalInvoice);
+            document.getElementById('withholdingAmount').textContent = formatCurrency(withholdingAmount);
+            document.getElementById('totalPayable').textContent = formatCurrency(totalPayable);
+            document.getElementById('amountInWords').textContent = numberToWords(totalPayable);
+        }
+
+        function clearAll() {
+            document.getElementById('invoiceAmount').value = '';
+            document.getElementById('taxType').value = 'vat-inclusive';
+            document.getElementById('withholdingRate').value = '0';
+            calculate();
+        }
+
+        function copyAmountInWords() {
+            const amountText = document.getElementById('amountInWords').textContent;
+            const tooltip = document.getElementById('copyTooltip');
+            
+            // Try modern clipboard API first
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(amountText).then(() => {
+                    showTooltip(tooltip);
+                }).catch(() => {
+                    fallbackCopy(amountText, tooltip);
+                });
+            } else {
+                // Use fallback method
+                fallbackCopy(amountText, tooltip);
+            }
+        }
+
+        function copyValue(elementId) {
+            const element = document.getElementById(elementId);
+            const value = element.textContent;
+            
+            // Try modern clipboard API first
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(value).then(() => {
+                    showCopyFeedback(element);
+                }).catch(() => {
+                    fallbackCopyValue(value, element);
+                });
+            } else {
+                // Use fallback method
+                fallbackCopyValue(value, element);
+            }
+        }
+
+        function fallbackCopyValue(text, element) {
+            // Create a temporary textarea element
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showCopyFeedback(element);
+            } catch (err) {
+                alert('Copied: ' + text);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function showCopyFeedback(element) {
+            const originalText = element.textContent;
+            element.textContent = 'Copied!';
+            element.style.backgroundColor = '#10b981';
+            element.style.color = 'white';
+            
+            setTimeout(() => {
+                element.textContent = originalText;
+                element.style.backgroundColor = '';
+                element.style.color = '';
+            }, 1000);
+        }
+
+        function fallbackCopy(text, tooltip) {
+            // Create a temporary textarea element
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showTooltip(tooltip);
+            } catch (err) {
+                alert('Amount in words: ' + text);
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function showTooltip(tooltip) {
+            tooltip.classList.remove('opacity-0');
+            tooltip.classList.add('opacity-100');
+            
+            setTimeout(() => {
+                tooltip.classList.remove('opacity-100');
+                tooltip.classList.add('opacity-0');
+            }, 2000);
+        }
+
+
+
+        // Add event listeners
+        document.getElementById('invoiceAmount').addEventListener('input', calculate);
+        document.getElementById('taxType').addEventListener('change', calculate);
+        document.getElementById('withholdingRate').addEventListener('change', calculate);
+
+        // Initial calculation
+        calculate();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97c3941b57f74ee5',t:'MTc1NzM4ODMyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
